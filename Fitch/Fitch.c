@@ -129,6 +129,5 @@ l'output (c) sara' dunque un array di liste di dimensione 1 */
 
 main(){ 
     printf("ciao: \n ");
-    printf("%d \n",l);
 
 }
