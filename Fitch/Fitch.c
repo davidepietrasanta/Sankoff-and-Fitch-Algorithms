@@ -13,6 +13,7 @@ typedef struct List {
 
 List* doList(int i){ 
     /* Ritorna una lista con una cella sola e valore i */
+
     List *l = (List*)malloc(sizeof(List));
     l->num = i;
     l->cont = 1;
@@ -91,7 +92,6 @@ List* moda(List *l, int max_stati){
         array[l->num] = array[l->num] + l->cont;
     }
 
-
     int index = 0;
     int max = array[0];
     for(i = 1; i < max_stati; i++){
@@ -101,11 +101,6 @@ List* moda(List *l, int max_stati){
         }
     }
 
-    /*
-    for(i = 0; i < max_stati; i++){
-        printf("%d, ",array[i]);
-    }
-    */
     List *new = (List*)malloc(sizeof(List)); 
     new->next = NULL; 
     new->num = index;
@@ -115,8 +110,8 @@ List* moda(List *l, int max_stati){
 }
 
 void merge(List *a[], List *c[], int max_stati[], int len){
-/* Applica moda su ogni lista dell'array a e la metta in c 
-l'output (c) sara' dunque un array di liste di dimensione 1 */
+    /* Applica moda su ogni lista dell'array a e la metta in c 
+    l'output (c) sara' dunque un array di liste di dimensione 1 */
 
     int i;
     for(i = 0; i < len; i++){
@@ -128,6 +123,5 @@ l'output (c) sara' dunque un array di liste di dimensione 1 */
 
 
 main(){ 
-    printf("ciao: \n ");
-
+    printf("work in progress!! \n ");
 }
