@@ -9,12 +9,21 @@
 typedef struct Tree {
     int nF; //numero figli
 	char* string;
+    bool flag; //True if ok
     struct Tree* padre;
     struct Tree* figli; //punta al primo figlio
     struct Tree* next; //punta al prossimo fratello
 }Tree;
 
 
+int len(char *s){ 
+    /* Restituisce la lunghezza della stringa s */
+
+    int i;
+    for(i = 0; *(s+i) != '\0' ; i++)
+        ;
+    return i;
+} 
 
 char* fstring(char *path){
     /* Legge un file e ritorna una stringa del file */
@@ -37,12 +46,27 @@ char* fstring(char *path){
     return buffer;
 }
 
+bool numericalString(char *s){
+    int i;
+    if( len(s) == 0 ){
+        return false;
+    }
+
+    for(i = 0; *(s+i) != '\0' ; i++){
+        if( s[i] < '0' || s[i] > '9' ){
+            return false;
+        }
+    }
+    return true;
+}
+
 Tree* doTree(char* c){
     /* Ritorna un Tree con valore c */
 
     Tree *l = (Tree*)malloc(sizeof(Tree));
     l->nF = 0;
     l->string = c;
+    l->flag = numericalString(c);
     l->padre = NULL;
     l->figli = NULL;
     l->next = NULL;
@@ -70,15 +94,6 @@ void addNext(Tree* t, Tree* brother){
     }
     t->next = brother;
 }
-
-int len(char *s){ 
-    /* Restituisce la lunghezza della stringa s */
-
-    int i;
-    for(i = 0; *(s+i) != '\0' ; i++)
-        ;
-    return i;
-} 
 
 char* reverse(char *s){
     /* Restituisce la stringa inversa della stringa s */
@@ -146,6 +161,17 @@ void setInit(char *s, int i){
     }
 }
 
+void printIntArray(int *array, int len){
+    /* Stampa un array di int di lunghezza len
+    (oppure fino a len) */
+
+    int i;
+    for(i = 0; i < len-1; i++){
+        printf("%d, ",array[i]);
+    }
+    printf("%d \n",array[len-1]);
+}
+
 char** extract(char *rev){
     /* Ritorna un array di stringhe contenete tutto cio'
     compreso tra due simboli */
@@ -153,6 +179,7 @@ char** extract(char *rev){
     int i;
     int cont = contSimbol(rev);
     int *array = allSimbol(rev); //lunghezza cont
+    //printf("simbol ");printIntArray(array, cont);
     char **estratti = (char**)malloc( cont * sizeof(char*));
     for(i =0; i < cont; i++){
         estratti[i] = (char*)malloc( len(rev) * sizeof(char)); //just to be sure...
@@ -160,15 +187,25 @@ char** extract(char *rev){
     }
     
     strncpy(estratti[0], rev, array[0]);
+    //printf("Estratti[0] %s \n",estratti[0]);
     for(i = 1; i < cont-1; i++){
         strncpy(estratti[i], rev+array[i-1]+1, array[i]-array[i-1]-1);
     }
-    strncpy(estratti[i], rev+array[cont-2]+1, 1);
+    strncpy(estratti[i], rev+array[cont-2]+1, array[cont-1]-array[cont-2]-1);
+    //printf("Estratti[i] %s \n",estratti[i]);
 
     return estratti;
 }
 
-Tree* Newick( char* string){
+void stampaMatrix(char **s, int x){
+    int i;
+    for(i = 0; i < x-1; i++){
+        printf("%s, ",s[i]);
+    }
+    printf("%s\n", s[x-1]);
+}
+
+Tree* Newick(char* string){
     /* Ritorna l'albero relativo alla stringa 
     secondo la codifica Newick*/
 
@@ -176,6 +213,7 @@ Tree* Newick( char* string){
     char *rev = reverse(string);
     int cont = contSimbol(rev);
     char **estratto = extract(rev);
+
     int *indexSimbols = allSimbol(rev); //lunghezza cont
     int i; 
     root = doTree(estratto[0]);
@@ -206,25 +244,6 @@ Tree* Newick( char* string){
     return root->padre;
 }
 
-void printIntArray(int *array, int len){
-    /* Stampa un array di int di lunghezza len
-    (oppure fino a len) */
-
-    int i;
-    for(i = 0; i < len-1; i++){
-        printf("%d, ",array[i]);
-    }
-    printf("%d \n ",array[len-1]);
-}
-
-void stampaMatrix(char **s, int x){
-    int i;
-    for(i = 0; i < x-1; i++){
-        printf("%s, ",s[i]);
-    }
-    printf("%s\n", s[x-1]);
-}
-
 void printTree(Tree* t){
     if( t == NULL ){
         printf("Empty \n");
@@ -239,17 +258,93 @@ void printTree(Tree* t){
     }
 }
 
+int numeroNodi(Tree *t){
+    if( t == NULL ){
+        return 0;
+    }
 
-int main(){ 
-    
-    char *stringa = fstring("newick.txt");
-    char *stringa_rev = reverse(stringa);
-    printf("%s \n",stringa);
-    printf("%s reverse\n",stringa_rev);
-    printIntArray(allSimbol(stringa_rev), contSimbol(stringa_rev));
-    char **matrix = extract(stringa_rev);
-    stampaMatrix(matrix, contSimbol(stringa_rev));
-    printTree(Newick(stringa));
-    
-    return 0;
+    int cont = 1;
+    if( t->figli != NULL){
+        cont = cont + numeroNodi(t->figli);
+    }
+    if( t->next != NULL){
+        cont = cont + numeroNodi(t->next);
+    }
+    return cont;
 }
+
+int numeroCaratteri(char *string){
+    
+    char ** estratti = extract(string);
+    int nSimboli = contSimbol(string);
+    int max = 0;
+    if(string == NULL ){
+        return 0;
+    }
+    int i;
+    for(i = 0; i < nSimboli; i++){
+        if( numericalString(estratti[i]) && max < len(estratti[i]) ){
+            max = len(estratti[i]);
+        }
+    }
+    return max;
+}
+
+int* statoMaxPerCarattere(char *string){
+
+    if(string == NULL ){
+        return 0;
+    }
+
+    char ** estratti = extract(string);
+    int nSimboli = contSimbol(string);
+    int nCaratteri = numeroCaratteri(string);
+    int *max = (int*)malloc(nCaratteri*sizeof(int)); 
+    //int max[nCaratteri];
+    int i;
+    int j;
+    for(i = 0; i < nCaratteri; i++){
+        max[i] = 0;
+    }
+
+    for(i = 0; i < nSimboli; i++){
+        if( numericalString(estratti[i]) ){
+            for(j = 0; j < nCaratteri; j++){
+                if( max[j] < estratti[i][j] - '0' ){
+                    max[j] = estratti[i][j] - '0';
+                }
+            }   
+        }
+    }
+    
+
+    //stampaMatrix(estratti, nSimboli);
+    //printf("estratti[0] %s.\n", estratti[0]);
+
+    //printf("max ");
+    //printIntArray(max, nCaratteri);
+    return max;
+}
+
+char* treeToNewick(Tree *t){
+
+    if( t == NULL ){
+        return NULL;
+    }
+
+    char *res = t->string;
+    //printf("res: %s\n", res);
+    if( t->figli != NULL){
+        res = strcat(res, "(");
+        res = strcat(res, reverse(treeToNewick(t->figli)));
+        res = strcat(res, ")");
+        
+    }
+    if( t->next != NULL){
+        res = strcat(res, ",");
+        res = strcat(res, reverse(treeToNewick(t->next)));
+    }
+    res = reverse(res);
+    return res;
+}
+
