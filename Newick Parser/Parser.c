@@ -350,22 +350,3 @@ char* treeToNewick(Tree *t){
     res = reverse(res);
     return res;
 }
-
-
-
-
-/*
-int main(){ 
-    
-    char *stringa = fstring("newick.txt");
-    char *stringa_rev = reverse(stringa);
-    printf("%s \n",stringa);
-    printf("%s reverse\n",stringa_rev);
-    printIntArray(allSimbol(stringa_rev), contSimbol(stringa_rev));
-    char **matrix = extract(stringa_rev);
-    stampaMatrix(matrix, contSimbol(stringa_rev));
-    printTree(Newick(stringa));
-    
-    return 0;
-}
-*/
