@@ -1,7 +1,4 @@
-
-#include <math.h> //Per le funzioni matematiche comuni. 
-#include <stdlib.h>
-#include <stdarg.h> //Utilizzato da funzioni che accettano un numero variabile di parametri. 
+ #include <stdlib.h>
 #include <stdbool.h> //Per un tipo di dato booleano. (Aggiunto con il C99) 
 #include <stdio.h> //Fornisce le funzionalità basilari di input/output del C. Questo file include il prototipo delle venerabili funzioni printf e scanf. 
 #include <string.h> //Per manipolare le stringhe. 
@@ -47,6 +44,7 @@ char* fstring(char *path){
 }
 
 bool numericalString(char *s){
+    /*True se la stringa e' numerica, False se altrimenti */
     int i;
     if( len(s) == 0 ){
         return false;
@@ -179,7 +177,6 @@ char** extract(char *rev){
     int i;
     int cont = contSimbol(rev);
     int *array = allSimbol(rev); //lunghezza cont
-    //printf("simbol ");printIntArray(array, cont);
     char **estratti = (char**)malloc( cont * sizeof(char*));
     for(i =0; i < cont; i++){
         estratti[i] = (char*)malloc( len(rev) * sizeof(char)); //just to be sure...
@@ -187,17 +184,17 @@ char** extract(char *rev){
     }
     
     strncpy(estratti[0], rev, array[0]);
-    //printf("Estratti[0] %s \n",estratti[0]);
     for(i = 1; i < cont-1; i++){
         strncpy(estratti[i], rev+array[i-1]+1, array[i]-array[i-1]-1);
     }
     strncpy(estratti[i], rev+array[cont-2]+1, array[cont-1]-array[cont-2]-1);
-    //printf("Estratti[i] %s \n",estratti[i]);
 
     return estratti;
 }
 
 void stampaMatrix(char **s, int x){
+    /*Stampa una matrice di char di dimensione x per x */
+
     int i;
     for(i = 0; i < x-1; i++){
         printf("%s, ",s[i]);
@@ -245,6 +242,9 @@ Tree* Newick(char* string){
 }
 
 void printTree(Tree* t){
+    /*Stampa un Tree */
+    //Da migliorare, fa il suo lavoro ma non indenta
+
     if( t == NULL ){
         printf("Empty \n");
     }
@@ -256,9 +256,11 @@ void printTree(Tree* t){
     if( t->next != NULL){
         printTree(t->next);
     }
+    
 }
 
 int numeroNodi(Tree *t){
+    /*Conta il numero di nodi dell'albero */
     if( t == NULL ){
         return 0;
     }
@@ -274,6 +276,7 @@ int numeroNodi(Tree *t){
 }
 
 int numeroCaratteri(char *string){
+    /*Conta il numero di Caratteri delle specie */
     
     char ** estratti = extract(string);
     int nSimboli = contSimbol(string);
@@ -291,7 +294,7 @@ int numeroCaratteri(char *string){
 }
 
 int* statoMaxPerCarattere(char *string){
-
+    /*Ritorna un vettore con lo stato massimo di ogni carattere */
     if(string == NULL ){
         return 0;
     }
@@ -300,7 +303,6 @@ int* statoMaxPerCarattere(char *string){
     int nSimboli = contSimbol(string);
     int nCaratteri = numeroCaratteri(string);
     int *max = (int*)malloc(nCaratteri*sizeof(int)); 
-    //int max[nCaratteri];
     int i;
     int j;
     for(i = 0; i < nCaratteri; i++){
@@ -323,17 +325,18 @@ int* statoMaxPerCarattere(char *string){
 
     //printf("max ");
     //printIntArray(max, nCaratteri);
+    //printf("fine\n");
     return max;
 }
 
 char* treeToNewick(Tree *t){
+    /*Ritorna una stringa Newick di un Tree*/
 
     if( t == NULL ){
         return NULL;
     }
 
     char *res = t->string;
-    //printf("res: %s\n", res);
     if( t->figli != NULL){
         res = strcat(res, "(");
         res = strcat(res, reverse(treeToNewick(t->figli)));
@@ -348,3 +351,21 @@ char* treeToNewick(Tree *t){
     return res;
 }
 
+
+
+
+/*
+int main(){ 
+    
+    char *stringa = fstring("newick.txt");
+    char *stringa_rev = reverse(stringa);
+    printf("%s \n",stringa);
+    printf("%s reverse\n",stringa_rev);
+    printIntArray(allSimbol(stringa_rev), contSimbol(stringa_rev));
+    char **matrix = extract(stringa_rev);
+    stampaMatrix(matrix, contSimbol(stringa_rev));
+    printTree(Newick(stringa));
+    
+    return 0;
+}
+*/
