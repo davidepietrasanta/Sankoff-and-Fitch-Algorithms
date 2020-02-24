@@ -37,11 +37,11 @@ extern void stampaMatrix(char**, int);
    
 extern void printTree(Tree*);
 
-int numeroNodi(Tree*);
+extern int numeroNodi(Tree*);
 
-int numeroCaratteri(char*);
+extern int numeroCaratteri(char*);
 
-int* statoMaxPerCarattere(char*);
+extern int* statoMaxPerCarattere(char*);
 
-char* treeToNewick(Tree*);
+extern char* treeToNewick(Tree*);
    

@@ -1,6 +1,4 @@
 
-#include <math.h> //Per le funzioni matematiche comuni. 
-#include <stdarg.h> //Utilizzato da funzioni che accettano un numero variabile di parametri. 
 #include <stdbool.h> //Per un tipo di dato booleano. (Aggiunto con il C99) 
 #include <stdio.h> //Fornisce le funzionalità basilari di input/output del C. Questo file include il prototipo delle venerabili funzioni printf e scanf. 
 #include <string.h> //Per manipolare le stringhe. 
@@ -13,10 +11,6 @@ typedef struct List {
 	struct List *next;
 }List;
 
-typedef struct ListChar{
-    char* str;
-	struct ListChar *next;
-}ListChar;
 
 List* doList(int i){ 
     /* Ritorna una lista con una cella sola e valore i */
@@ -58,13 +52,15 @@ List* last(List* l){
 }
 
 int myAtoi(char c){
-    //converte il char numerico in un numero '9' -> 9
-    //funziona solo con numeri in [0,9]
+    /* converte il char numerico in un numero '9' -> 9
+    funziona solo con numeri in [0,9] */
     int num = c - '0';
     return num;
 }
 
 List* stringToList(char *string){
+    /*Converte una stringa in una List */
+
     int lenS = len(string);
     if( lenS < 1 ){
         return NULL;
@@ -82,8 +78,7 @@ List* stringToList(char *string){
 }
 
 void stringToArrayList(char* string, List* arrayList[]){
-    //Converta una stringa in un array di liste di lunghezza una
-    // ATTENZIONE la lunghezza di arrayList deve esser lenS
+    /*Converta una stringa in un array di liste di lunghezza uno */
 
     int lenS = len(string);
     if( lenS < 1 ){
@@ -97,8 +92,8 @@ void stringToArrayList(char* string, List* arrayList[]){
 }
 
 char* arrayListToString(List* arrayList[], int lenS){
-    //Converta un array di liste di lunghezza uno in una stringa
-    // ATTENZIONE la lunghezza di arrayList deve esser lenS
+    /* Converta un array di liste di lunghezza uno in una stringa
+    ATTENZIONE la lunghezza di arrayList deve esser lenS*/
 
     
     int i;
@@ -111,7 +106,7 @@ char* arrayListToString(List* arrayList[], int lenS){
 }
 
 void ArrayListcopy(List* b[], List* a[], int lens){
-    //copia a in b
+    /*Copia a in b */
     int i;
     for(i = 0; i < lens; i++){
         b[i] = doList(a[i]->num);
@@ -119,6 +114,8 @@ void ArrayListcopy(List* b[], List* a[], int lens){
 }
 
 void stampaList(List *l){
+    /*Stampa una List */
+
     if (l == NULL) {
         printf("empty \n");
     }
@@ -133,6 +130,8 @@ void stampaList(List *l){
 }
 
 void stampaListDettagliato(List *l){
+    /*Stampa una List con anche il cont */
+
     if (l == NULL) {
         printf("empty \n");
     }
@@ -147,6 +146,9 @@ void stampaListDettagliato(List *l){
 }
 
 void stampaArrayList(List* L[], int lens) {
+    /*Stampa un'array di List di lunghezza lens 
+    (oppure fino a lens) */
+
     int i;
 	for(i = 0; i < lens; i++){
         stampaList(L[i]);
@@ -154,13 +156,17 @@ void stampaArrayList(List* L[], int lens) {
 }
 
 void stampaArrayListDettagliato(List* L[], int lens) {
+    /*Stampa un'array di List di lunghezza lens con il relativo cont
+    (oppure fino a lens) */
+
     int i;
 	for(i = 0; i < lens; i++){
         stampaListDettagliato(L[i]);
     }
 }
 
-List* makeList(int i) { //crea una lista di lunghezza i tramite ricorsione
+List* makeList(int i) { 
+    /* Crea una lista di lunghezza i tramite ricorsione */
     if( i <= 0 ){
         return NULL;
     }
@@ -176,33 +182,31 @@ List* makeList(int i) { //crea una lista di lunghezza i tramite ricorsione
     return l;
 }
 
-void intersection(List *a[], List* b[], List* c[],int lens){
-    /* Interseca a livello insiemistico a con b e salva in c */
+void intersection(List *a[], List* b[],int lens){
+    /* Interseca a livello insiemistico a con b e salva in a
+    Assume che siano di pari lunghezza lens*/
 
-    //Posso assumere siano di pari lunghezza len
-    //Ho un Array di List
     if( lens <= 0 ){
         return ;
     }
-
+    
     for(int i = 0; i < lens; i++){
         if( ListLen(a[i]) == 1 && ListLen(b[i]) == 1 && a[i]->num == b[i]->num ){
-            //vuol dire che in quella "cella" hannno un unico valore ed e' lo stesso
-            c[i]->num = a[i]->num;
-            c[i]->cont = c[i]->cont + 2;
+            //vuol dire che in quella "cella" hanno un unico valore ed e' lo stesso
+            a[i]->cont = a[i]->cont + b[i]->cont;
         }
         else{
-            c[i] = a[i];
-            last(c[i])->next = b[i];
+            last(a[i])->next = b[i];
         }
     }
+    
 }
 
 List* moda(List *l, int max_stati){
     /* Ritorna l'elemento piu' ripetuto nella lista, 
     in caso di parita' ritorna il primo incontrato */
 
-    if( l == NULL || max_stati <= 0 ){
+    if( l == NULL  ){
         return NULL;
     }
     int array[max_stati+1];
@@ -211,11 +215,21 @@ List* moda(List *l, int max_stati){
         array[i] = 0;
     }
 
+    if( l->next == NULL ){
+
+        List *new = (List*)malloc(sizeof(List)); 
+        new->next = NULL; 
+        new->num = l->num;
+        new->cont = l->cont;
+        return new;
+    }
+    
     while( l != NULL ){
         array[l->num] = array[l->num] + l->cont;
         l = l->next;
     }
 
+    
     int index = 0;
     int max = array[0];
     for(i = 1; i < max_stati+1; i++){
@@ -229,7 +243,6 @@ List* moda(List *l, int max_stati){
     new->next = NULL; 
     new->num = index;
     new->cont = max;
-
     return new;
 }
 
@@ -244,23 +257,24 @@ void merge(List *a[], List *c[], int max_stati[], int lens){
 }
 
 bool allChildrenFlag(Tree* t){
-    //True se tutti i figli sono con flag True
-    //False altrimenti
+    /* True se tutti i figli sono con flag True
+    False altrimenti*/
+
     if( t == NULL || t->figli == NULL){
         return false;
     }
 
     Tree* f = t->figli;
     bool ris = f->flag;
-    while( f->figli != NULL && ris ){
-        f = f->figli;
+    while( f->next != NULL && ris ){
+        f = f->next;
         ris = ris && f->flag;
     }
     return ris;
 }
 
 void Fitch(Tree* t, int num_caratteri, int maxStati[]){
-    //Risolve l'albero t
+    /*Risolve l'albero t eseguendo l'algoritmo di Fitch */
     
     if( t == NULL ){
         return; 
@@ -272,19 +286,18 @@ void Fitch(Tree* t, int num_caratteri, int maxStati[]){
     }
 
     if( allChildrenFlag(t) ){ 
-        //se non ha figli non entra
-            
+        //(info) se non ha figli non entra nemmeno
+
         int numFigli = t->nF;
         Tree* f = t->figli;
-
         if( numFigli == 1 ){
             if( f->flag ){
                 strcpy(t->string, f->string); 
-                //Si potrebbe fare t->string = f->string
-                //e si ottimizzerebbe la memoria ma 
-                //ciò porta ad un legame troppo stretto 
-                //tra padre e figlio, per modellazioni 
-                //future considero meglio fare cosi
+                /*Si potrebbe fare t->string = f->string
+                e si ottimizzerebbe la memoria ma 
+                ciò porta ad un legame troppo stretto 
+                tra padre e figlio, per modellazioni 
+                future considero meglio fare cosi*/
                 t->flag = true;
                 return;
             }
@@ -295,29 +308,22 @@ void Fitch(Tree* t, int num_caratteri, int maxStati[]){
             }
             
         }
-
         int i;
         List *a[num_caratteri];
         List *b[num_caratteri];
         List *c[num_caratteri];
 
         stringToArrayList(f->string, a);
-         
         while( f->next != NULL ){
             f = f->next;
-            //printf("aI:");stampaArrayListDettagliato(a, num_caratteri);
             stringToArrayList(f->string, b);
-            intersection(a,b,a,num_caratteri);
-
-            //printf("b:");stampaArrayListDettagliato(b, num_caratteri);
-            //printf("a:");stampaArrayListDettagliato(a, num_caratteri);
+            intersection(a,b,num_caratteri);
         }
 
         merge(a,c, maxStati, num_caratteri);
-        //printf("%s", t->string);
-        t->string = arrayListToString(a, num_caratteri);
-        //printf("->%s \n", t->string);
+        t->string = arrayListToString(c, num_caratteri);
         t->flag = true;
+        Fitch(t, num_caratteri, maxStati);
         return;
     }
 
@@ -331,30 +337,53 @@ void Fitch(Tree* t, int num_caratteri, int maxStati[]){
             }
             f = f->next;
         }
-
-
     }
-        
+
+    Fitch(t, num_caratteri, maxStati);    
 }
 
-void fitch_algorithm(char *stringa){
+
+bool stringToFile(char *path, char* string){
+    /*Salva la stringa in un file simile a quello inserito */
+    int len_path = len(path);
+    char *newpath = (char*)malloc((len_path+5)*(sizeof(char)));
+    strcpy(newpath,path);
     
-    printf("%s \n",stringa);
+    //Togliamo .txt finale
+    newpath[len_path-1] = '\0';
+    newpath[len_path-2] = '\0';
+    newpath[len_path-3] = '\0';
+    newpath[len_path-4] = '\0';
+    strcat(newpath,"Fitch.txt");
+
+    FILE *file;
+    file=fopen(newpath, "w");
+    if( file==NULL ) {
+        perror("Errore in apertura del file");
+        return false;
+    }
+
+	/* scrive il numero */
+    fprintf(file, "%s\n", string);
+    /* chiude il file */
+    fclose(file);
+    return true;
+}
+
+void fitch_algorithm(char* path){
+    /*Algoritmo di Fitch
+    Il path deve esser del tipo:
+    -   /home/davide/Scrivania/nome_file.txt
+    -   nome_file.txt
+    */
+
+    char *stringa = fstring(path);
+    printf("Input Tree: %s\n",stringa);
     Tree* newick = Newick(stringa);
-    //printTree(newick);
     int numero_caratteri = numeroCaratteri(stringa);
-    //printf("numero caratteri = %d \n", numero_caratteri);
     int *max_stati = statoMaxPerCarattere(stringa);
     Fitch(newick, numero_caratteri, max_stati);
-    Fitch(newick, numero_caratteri, max_stati);
-    //printf("Newick tree \n");
-    //printTree(newick);
     char* stringaNewick = treeToNewick(newick);
-    printf("%s \n",  stringaNewick);
-}
-
-
-int main(){
-    char *stringa = fstring("newick.txt");
-    fitch_algorithm(stringa);
+    printf("Output Tree: %s \n",  stringaNewick);    
+    stringToFile(path,stringaNewick);
 }
