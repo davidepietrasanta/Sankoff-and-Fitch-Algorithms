@@ -267,10 +267,12 @@ int **getMatrix(char *mat, int *nStates)
     return matrix;
 }
 
-void sankoff_algorithm(char *string, char *mat)
+void sankoff_algorithm(char *stringP, char *matP)
 {
+    char *string = fstring(stringP);
+    char *matrix = fstring(matP);
     int nStates = 0;
-    int **cost = getMatrix(mat, &nStates);
+    int **cost = getMatrix(matrix, &nStates);
     printf("Input Tree: %s\n", string);
     Tree *tree = Newick(string);
     int nCharacters = getNumOfCharacters(tree);
@@ -279,11 +281,4 @@ void sankoff_algorithm(char *string, char *mat)
     tree = sankoffTreeToTree(stree, nStates, nCharacters);
     char *stringaNewick = treeToNewick(tree);
     printf("Output Tree: %s\n", stringaNewick);
-}
-
-int main()
-{
-    char *string = fstring("newick.txt");
-    char *matrix = fstring("cost.txt");
-    sankoff_algorithm(string, matrix);
 }
