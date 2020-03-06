@@ -384,6 +384,6 @@ void fitch_algorithm(char* path){
     int *max_stati = statoMaxPerCarattere(stringa);
     Fitch(newick, numero_caratteri, max_stati);
     char* stringaNewick = treeToNewick(newick);
-    printf("Output Tree: %s \n",  stringaNewick);    
+    printf("Output Fitch Tree: %s \n",  stringaNewick);    
     stringToFile(path,stringaNewick);
 }
