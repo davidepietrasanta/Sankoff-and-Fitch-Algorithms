@@ -4,6 +4,7 @@ Tree are coded in Newick Format, for example (F,(C,D,E)B,(W,L)K)A is [Here](http
 Rule:
 - name of unkown species must be without numbers
 - character-state must be in [0,9]
+- maximum cost to change state should not be greater than 134217727
 - path name should not be greater than 10.000 char
 
 Info:
