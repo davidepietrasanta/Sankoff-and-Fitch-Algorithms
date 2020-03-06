@@ -280,5 +280,5 @@ void sankoff_algorithm(char *stringP, char *matP)
     Sankoff(stree, nStates, nCharacters, cost);
     tree = sankoffTreeToTree(stree, nStates, nCharacters);
     char *stringaNewick = treeToNewick(tree);
-    printf("Output Tree: %s\n", stringaNewick);
+    printf("Output Sankoff Tree: %s\n", stringaNewick);
 }
