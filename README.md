@@ -21,4 +21,4 @@ How to run the code(example):
 - 0
 - newick.txt
 - cost.txt
-You can use other files, just write their path.
+-You can use other files, just write their path.
