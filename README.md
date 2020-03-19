@@ -7,7 +7,7 @@ Rule:
 - character-state must be in [0,9]
 - maximum cost to change state should not be greater than 134217727
 - path name should not be greater than 10.000 char
-- matrix files must have the number of character-state before the matrix
+- matrix files must have the number of characters before the matrix
 
 Info:
 - the output is written on Terminal and saved in a file
