@@ -158,6 +158,18 @@ Tree *sankoffTreeToTree(SankoffTree *sTree, int nStates, int nCharacters)
                 if (sTree->score[nChar][nState] < min)
                     mins[nChar] = nState;
             }
+            if(sTree->padre!=NULL){
+            int minFat = 0;
+            SankoffTree *sFather = sTree->padre;
+            for (int nState = 1; nState < nStates; nState++)
+            {
+                int min = sFather->score[nChar][minFat];
+                if (sFather->score[nChar][nState] < min)
+                    minFat = nState;
+            }
+            if(sTree->score[nChar][minFat] == sTree->score[nChar][mins[nChar]])
+            mins[nChar] = minFat;
+            }
         }
         char *stringa = malloc((nCharacters + 1) * sizeof(char));
         for (int nChar = 0; nChar < nCharacters; nChar++)
@@ -192,32 +204,6 @@ Tree *sankoffTreeToTree(SankoffTree *sTree, int nStates, int nCharacters)
         tree->figli = NULL;
     tree->next = NULL;
     return tree;
-}
-
-/* Ricava il numero di caratteri a partire da un albero */
-int getNumOfCharacters(Tree *tree)
-{
-    if (tree->string == NULL)
-        return -1;
-    if (isDigit(tree->string[0]))
-        return strlen(tree->string);
-    if (tree->nF == 0)
-        return -1;
-    else
-    {
-        Tree *son = tree->figli;
-        int n = getNumOfCharacters(son);
-        if (n = ! - 1)
-            return n;
-
-        for (int i = 1; i < tree->nF; i++)
-        {
-            n = getNumOfCharacters(son->next);
-            if (n != -1)
-                return n;
-            son = son->next;
-        }
-    }
 }
 
 /* Ricava il numero rappresentato da una sequenza di caratteri (cifre) */
@@ -267,18 +253,49 @@ int **getMatrix(char *mat, int *nStates)
     return matrix;
 }
 
+bool save(char *path, char* string){
+    /*Salva la stringa in un file simile a quello inserito */
+    int len_path = len(path);
+    char *newpath = (char*)malloc((len_path+5)*(sizeof(char)));
+    strcpy(newpath,path);
+    
+    //Togliamo .txt finale
+    newpath[len_path-1] = '\0';
+    newpath[len_path-2] = '\0';
+    newpath[len_path-3] = '\0';
+    newpath[len_path-4] = '\0';
+    strcat(newpath,"Sankoff.txt");
+
+    FILE *file;
+    file=fopen(newpath, "w");
+    if( file==NULL ) {
+        perror("Errore in apertura del file");
+        return false;
+    }
+
+	/* scrive il numero */
+    fprintf(file, "%s\n", string);
+    /* chiude il file */
+    fclose(file);
+    return true;
+}
+
+
 void sankoff_algorithm(char *stringP, char *matP)
 {
     char *string = fstring(stringP);
     char *matrix = fstring(matP);
     int nStates = 0;
     int **cost = getMatrix(matrix, &nStates);
+    int nCharacters = numeroCaratteri(string);
     printf("Input Tree: %s\n", string);
     Tree *tree = Newick(string);
-    int nCharacters = getNumOfCharacters(tree);
     SankoffTree *stree = makeSankoffTree(tree, nStates, nCharacters);
     Sankoff(stree, nStates, nCharacters, cost);
     tree = sankoffTreeToTree(stree, nStates, nCharacters);
     char *stringaNewick = treeToNewick(tree);
-    printf("Output Sankoff Tree: %s\n", stringaNewick);
+    printf("Cost matrix: \n\nNumber of states: ");
+    printf("%s",matrix);
+    printf("\nOutput Sankoff Tree: %s\n", stringaNewick);
+    save(stringP,stringaNewick);
 }
