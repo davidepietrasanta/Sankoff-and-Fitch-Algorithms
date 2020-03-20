@@ -24,14 +24,15 @@ bool isDigit(char character)
     return (character >= 48 && character <= 57);
 }
 
-bool sameDigit(char c, int num)
-{
-    return (num == c - '0');
-}
-
 int digitToNum(char c){
     return c - '0';
 }
+
+bool sameDigit(char c, int num)
+{
+    return (num == digitToNum(c));
+}
+
 
 /* Crea un albero con la stessa morfologia di quello in input e che ne
    inizializza i costi delle foglie per ogni carattere */
@@ -148,7 +149,7 @@ int getNumFromString(char *mat, int i, int digitsNumber)
     int pot = 1, number = 0;
     for (int j = 0; j < digitsNumber; j++)
     {
-        number = number + (mat[i - 1 - j] - '0') * pot;
+        number = number + digitToNum(mat[i - 1 - j]) * pot;
         pot = pot * 10;
     }
     return number;
