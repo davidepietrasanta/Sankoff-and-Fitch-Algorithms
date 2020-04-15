@@ -24,10 +24,15 @@ bool isDigit(char character)
     return (character >= 48 && character <= 57);
 }
 
+int digitToNum(char c){
+    return c - '0';
+}
+
 bool sameDigit(char c, int num)
 {
-    return (num == c - '0');
+    return (num == digitToNum(c));
 }
+
 
 /* Crea un albero con la stessa morfologia di quello in input e che ne
    inizializza i costi delle foglie per ogni carattere */
@@ -138,95 +143,13 @@ void *Sankoff(SankoffTree *node, int nStates, int nCharacters, int **cost)
     }
 }
 
-/* Produce un albero con i relativi stati di ogni carattere a partire
-   dal loro parsimony score */
-Tree *sankoffTreeToTree(SankoffTree *sTree, int nStates, int nCharacters)
-{
-    Tree *tree = (Tree *)malloc(sizeof(Tree));
-    tree->nF = sTree->nF;
-    if (sTree->score == NULL)
-        tree->string = NULL;
-    else
-    {
-        int *mins = malloc(sizeof(int) * nCharacters);
-        for (int nChar = 0; nChar < nCharacters; nChar++)
-        {
-            mins[nChar] = 0;
-            for (int nState = 1; nState < nStates; nState++)
-            {
-                int min = sTree->score[nChar][mins[nChar]];
-                if (sTree->score[nChar][nState] < min)
-                    mins[nChar] = nState;
-            }
-        }
-        char *stringa = malloc((nCharacters + 1) * sizeof(char));
-        for (int nChar = 0; nChar < nCharacters; nChar++)
-            stringa[nChar] = mins[nChar] + '0';
-        stringa[nCharacters] = '\0';
-        tree->string = stringa;
-    }
-    tree->padre = NULL;
-    // Se il nodo ha almeno un figlio si costruiscono anche i nodi dei figli
-    if (tree->nF > 0)
-    {
-        // tSon sarà il primo figlio
-        Tree *tSon = sankoffTreeToTree((sTree->figli), nStates, nCharacters);
-        tSon->padre = tree;
-        tree->figli = tSon;
-
-        /* Fino a quando non si creano tutti i figli si crea un nuovo nodo e
-           viene inizializzato sulla base di quello 
-           equivalente nell'albero originale */
-        SankoffTree *stSon = sTree->figli;
-        for (int i = 1; i < sTree->nF; i++)
-        {
-            SankoffTree *next = stSon->next;
-            Tree *tmpSon = sankoffTreeToTree(next, nStates, nCharacters);
-            tmpSon->padre = tree;
-            tSon->next = tmpSon;
-            tSon = tmpSon;
-            stSon = next;
-        }
-    }
-    else
-        tree->figli = NULL;
-    tree->next = NULL;
-    return tree;
-}
-
-/* Ricava il numero di caratteri a partire da un albero */
-int getNumOfCharacters(Tree *tree)
-{
-    if (tree->string == NULL)
-        return -1;
-    if (isDigit(tree->string[0]))
-        return strlen(tree->string);
-    if (tree->nF == 0)
-        return -1;
-    else
-    {
-        Tree *son = tree->figli;
-        int n = getNumOfCharacters(son);
-        if (n = ! - 1)
-            return n;
-
-        for (int i = 1; i < tree->nF; i++)
-        {
-            n = getNumOfCharacters(son->next);
-            if (n != -1)
-                return n;
-            son = son->next;
-        }
-    }
-}
-
 /* Ricava il numero rappresentato da una sequenza di caratteri (cifre) */
 int getNumFromString(char *mat, int i, int digitsNumber)
 {
     int pot = 1, number = 0;
     for (int j = 0; j < digitsNumber; j++)
     {
-        number = number + (mat[i - 1 - j] - '0') * pot;
+        number = number + digitToNum(mat[i - 1 - j]) * pot;
         pot = pot * 10;
     }
     return number;
@@ -267,18 +190,118 @@ int **getMatrix(char *mat, int *nStates)
     return matrix;
 }
 
+bool save(char *path, char* string){
+    /*Salva la stringa in un file simile a quello inserito */
+    int len_path = len(path);
+    char *newpath = (char*)malloc((len_path+5)*(sizeof(char)));
+    strcpy(newpath,path);
+    
+    //Togliamo .txt finale
+    newpath[len_path-1] = '\0';
+    newpath[len_path-2] = '\0';
+    newpath[len_path-3] = '\0';
+    newpath[len_path-4] = '\0';
+    strcat(newpath,"Sankoff.txt");
+
+    FILE *file;
+    file=fopen(newpath, "w");
+    if( file==NULL ) {
+        perror("Errore in apertura del file");
+        return false;
+    }
+
+	/* scrive il numero */
+    fprintf(file, "%s\n", string);
+    /* chiude il file */
+    fclose(file);
+    return true;
+}
+
+/* Produce un albero con i relativi stati di ogni carattere a partire
+   dal loro parsimony score
+   nS = numero di stati
+   nC = numero di caratteri
+   c = matrice dei costi */
+void stToTree(Tree *tree, SankoffTree *sTree, int nS, int nC, int** c){
+    if(sTree!=NULL){
+    if(sTree->padre == NULL){
+        int *mins = malloc(sizeof(int) * nC);
+        for (int nChar = 0; nChar < nC; nChar++)
+        {
+            mins[nChar] = 0;
+            for (int nState = 1; nState < nS; nState++)
+            {
+                int min = sTree->score[nChar][mins[nChar]];
+                if (sTree->score[nChar][nState] < min)
+                    mins[nChar] = nState;
+            }
+        }
+        char *stringa = malloc((nC + 1) * sizeof(char));
+        for (int nChar = 0; nChar < nC; nChar++)
+            stringa[nChar] = mins[nChar] + '0';
+        stringa[nC] = '\0';
+        tree->string = stringa;
+    }
+    else
+    {
+
+        int *mins = malloc(sizeof(int) * nC);
+        for (int nChar = 0; nChar < nC; nChar++)
+        {
+            mins[nChar] = 0;
+            for (int state = 1; state < nS; state++)
+            {
+                //sp = stato del padre
+                int sp = digitToNum(tree->padre->string[nChar]);
+                //sS = min score del carattere trovato ad iterazione corrente
+                int sS = sTree->score[nChar][mins[nChar]];
+                int min = sS + c[mins[nChar]][sp];
+                if (sTree->score[nChar][state] + c[state][sp] < min)
+                    mins[nChar] = state;
+            }
+            
+        }
+        char *stringa = malloc((nC + 1) * sizeof(char));
+        for (int nChar = 0; nChar < nC; nChar++)
+            stringa[nChar] = mins[nChar] + '0';
+        stringa[nC] = '\0';
+        tree->string = stringa;
+        
+    }
+
+    if(sTree->nF>0){
+        Tree *son = tree->figli;
+        SankoffTree *sSon = sTree->figli;
+
+        stToTree(son,sSon,nS,nC, c);
+
+        for(int nSon = 1; nSon < sTree->nF; nSon++){
+
+        sSon = sSon->next;
+        son = son->next;
+        stToTree(son,sSon,nS,nC, c);
+        }
+
+    }
+    }
+    
+}
+
 void sankoff_algorithm(char *stringP, char *matP)
 {
     char *string = fstring(stringP);
     char *matrix = fstring(matP);
     int nStates = 0;
     int **cost = getMatrix(matrix, &nStates);
+    int nCharacters = numeroCaratteri(string);
     printf("Input Tree: %s\n", string);
     Tree *tree = Newick(string);
-    int nCharacters = getNumOfCharacters(tree);
     SankoffTree *stree = makeSankoffTree(tree, nStates, nCharacters);
     Sankoff(stree, nStates, nCharacters, cost);
-    tree = sankoffTreeToTree(stree, nStates, nCharacters);
+    stToTree(tree,stree, nStates, nCharacters, cost);
     char *stringaNewick = treeToNewick(tree);
-    printf("Output Sankoff Tree: %s\n", stringaNewick);
+    printf("Cost matrix: \n\nNumber of states: ");
+    printf("%s",matrix);
+    printf("\nOutput Sankoff Tree: %s\n", stringaNewick);
+    save(stringP,stringaNewick);
 }
