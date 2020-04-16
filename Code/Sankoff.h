@@ -1,3 +1,7 @@
+/**
+	@file Sankoff.c 
+	@brief Algoritmo di Sankoff
+*/
 typedef struct SankoffTree {
     int nF; // Numero figli
     int **score;
