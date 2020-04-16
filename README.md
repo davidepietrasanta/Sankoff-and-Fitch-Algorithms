@@ -1,6 +1,6 @@
 # Sankoff-and-Fitch-Algorithms
 C implementation of Sankoff and Fitch Algorithms.
-Tree are coded in Newick Format, for example (F,(C,D,E)B,(W,L)K)A is [Here](https://github.com/davidepietrasanta/Sankoff-and-Fitch-Algorithms/blob/master/Newick%20Parser/Tree.pdf)
+Tree are coded in Newick Format, for example (F,(C,D,E)B,(W,L)K)A is [Here](https://github.com/davidepietrasanta/Sankoff-and-Fitch-Algorithms/blob/master/Tree.pdf)
 Rule:
 - all input must be correct
 - name of unkown species must be without numbers
@@ -22,3 +22,7 @@ How to run the code(example):
 - newick.txt
 - cost.txt
 -You can use other files, just write their path.
+
+Build documentation with doxygen:
+-doxygen Doxyfile
+It will build the html 
