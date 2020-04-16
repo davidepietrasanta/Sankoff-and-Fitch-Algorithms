@@ -24,5 +24,5 @@ How to run the code(example):
 -You can use other files, just write their path.
 
 Build documentation with doxygen:
--doxygen Doxyfile
+- doxygen Doxyfile
 It will build the html 
