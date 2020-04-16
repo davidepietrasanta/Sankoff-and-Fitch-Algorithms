@@ -25,4 +25,4 @@ How to run the code(example):
 
 Build documentation with doxygen:
 - doxygen Doxyfile
-It will build the html 
+-It will build the html 
