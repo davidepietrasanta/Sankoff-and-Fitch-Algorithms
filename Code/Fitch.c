@@ -15,8 +15,7 @@
     linkata semplice con un valore(num)
     e un peso(cont)
 */
-typedef struct List 
-{
+typedef struct List {
 	int num; //valore
     int cont; //peso
 	struct List *next;
@@ -26,9 +25,8 @@ typedef struct List
 	Struttura per rappresentare un albero
     di array di liste con N figli
 */
-typedef struct FitchTree 
-{
-    int nF; //numero figli
+typedef struct FitchTree {
+    int n_figli; //numero figli
 	List **lista;
     struct FitchTree* padre;
     struct FitchTree* figli; //punta al primo figlio
@@ -39,8 +37,7 @@ typedef struct FitchTree
     Ritorna una lista con una cella sola e valore i
     @param i valore della lista creata
 */
-List* do_list(int i)
-{ 
+List* do_list(int i) { 
 
     List *l = (List*)malloc(sizeof(List));
     l->num = i;
@@ -54,8 +51,7 @@ List* do_list(int i)
     Ritorna la lunghezza dela lista
     @param l lista 
 */
-int list_len(List *l) 
-{
+int list_len(List *l) {
 
     if (l == NULL) {
         return 0;
@@ -73,8 +69,7 @@ int list_len(List *l)
     Ritorna l'ultimo elemento (cella) della lista
     @param l lista
 */
-List* last(List* l)
-{ 
+List* last(List* l) { 
 
     if (l == NULL) {
         return NULL;
@@ -91,8 +86,7 @@ List* last(List* l)
     @param l lista a cui si vuole aggiungere un elemento
     @param i valore dell'elemento che si vuole aggiungere
 */
-void add_list(List *l, int i) 
-{
+void add_list(List *l, int i) {
     List *new = (List*)malloc(sizeof(List)); 
     List* ultimo = last(l); 
     new->next = NULL; 
@@ -132,15 +126,15 @@ int my_atoi(char c){
 */
 List* string_to_list(char *string){
 
-    int lenS = len(string);
-    if( lenS < 1 ){
+    int len_s = len(string);
+    if( len_s < 1 ){
         return NULL;
     }
     List *temp; 
     List *new = do_list(my_atoi(string[0]));
     List *act = new;
     int i;
-    for(i = 1; i < lenS; i++){
+    for(i = 1; i < len_s; i++){
         temp = do_list(my_atoi(string[i]));
         act->next = temp;
         act = act-> next;
@@ -152,34 +146,34 @@ List* string_to_list(char *string){
     Converte una stringa in un array di liste di
     lunghezza uno
     @param string stringa che si vuole convertire
-    @param arrayList array di liste equivalente a string
+    @param array_list array di liste equivalente a string
 */
-void string_to_array_list(char* string, List* arrayList[]){
+void string_to_array_list(char* string, List* array_list[]){
 
-    int lenS = len(string);
-    if( lenS < 1 ){
-        arrayList = NULL;
+    int len_s = len(string);
+    if( len_s < 1 ){
+        array_list = NULL;
     }
     int i;
     
-    for(i = 0; i < lenS; i++){
-        arrayList[i] = do_list(my_atoi(string[i]));
+    for(i = 0; i < len_s; i++){
+        array_list[i] = do_list(my_atoi(string[i]));
     }
 }
 
 /**
     Converta un array di liste di lunghezza uno in una stringa
-    ATTENZIONE la lunghezza di arrayList deve esser lenS
-    @param arrayList array di liste che si vuole convertire
-    @param lenS lunghezza dell'array di liste
+    ATTENZIONE la lunghezza di array_list deve esser len_s
+    @param array_list array di liste che si vuole convertire
+    @param len_s lunghezza dell'array di liste
 */
-char* array_list_to_string(List* arrayList[], int lenS){
+char* array_list_to_string(List* array_list[], int len_s){
     
     int i;
-    char *string = (char*)malloc(sizeof(char)*(lenS+1));
-    string[lenS] = '\0';
-    for(i = 0; i < lenS; i++){
-        string[i] = arrayList[i]->num + '0';
+    char *string = (char*)malloc(sizeof(char)*(len_s+1));
+    string[len_s] = '\0';
+    for(i = 0; i < len_s; i++){
+        string[i] = array_list[i]->num + '0';
     }
     return string;
 }
@@ -342,7 +336,7 @@ void print_FitchTree_dettagliata(FitchTree* t, int lens){
     ricorsivo
     @param i lunghezza della lista ritornata
 */
-List* makeList(int i) { 
+List* make_list(int i) { 
 
     if( i <= 0 ){
         return NULL;
@@ -353,7 +347,7 @@ List* makeList(int i) {
 	    l=(List*)malloc(sizeof(List));
         l->num=i;
         l->cont = 1;
-	    l->next = makeList(i-1);
+	    l->next = make_list(i-1);
 	    return l;
     }
     return l;
@@ -370,36 +364,36 @@ FitchTree *make_FitchTree(Tree *tree){
     if( tree == NULL ){
         return NULL;
     }
-    FitchTree *newTree = (FitchTree *)malloc(sizeof(FitchTree));
-    newTree->padre = NULL;
-    newTree->nF = tree->nF;
+    FitchTree *new_tree = (FitchTree *)malloc(sizeof(FitchTree));
+    new_tree->padre = NULL;
+    new_tree->n_figli = tree->nF;
     if( !tree->flag ){
-        newTree->lista = NULL;
+        new_tree->lista = NULL;
     }
     else{
-        newTree->lista = (List**)malloc(strlen(tree->string)*sizeof(List));
-        string_to_array_list(tree->string, newTree->lista);
+        new_tree->lista = (List**)malloc(strlen(tree->string)*sizeof(List));
+        string_to_array_list(tree->string, new_tree->lista);
     }
 
     if( tree->figli != NULL ){
-        Tree* iterator = tree->figli;
-        newTree->figli = make_FitchTree(iterator);
-        FitchTree* temp = newTree->figli;
-        temp->padre = newTree;
-        newTree->figli = temp;
-        while( iterator->next != NULL ){
-            temp->next = make_FitchTree(iterator->next);
+        Tree* temp_tree = tree->figli;
+        new_tree->figli = make_FitchTree(temp_tree);
+        FitchTree* temp = new_tree->figli;
+        temp->padre = new_tree;
+        new_tree->figli = temp;
+        while( temp_tree->next != NULL ){
+            temp->next = make_FitchTree(temp_tree->next);
             temp = temp->next; 
-            temp->padre=newTree;
-            iterator = iterator->next;
+            temp->padre=new_tree;
+            temp_tree = temp_tree->next;
             
         } 
     }
     else{
-        newTree->figli = NULL;
+        new_tree->figli = NULL;
     }
 
-    newTree->next=NULL;
+    new_tree->next=NULL;
 
 }
 
@@ -412,8 +406,8 @@ List* copy_list(List *b){
     if( b == NULL ){
         return NULL;
     }
-    List *copyP = (List*)malloc(sizeof(List));
-    List *copy = copyP;
+    List *copy_p = (List*)malloc(sizeof(List));
+    List *copy = copy_p;
     List *b_temp = b;
    
     do{
@@ -429,7 +423,7 @@ List* copy_list(List *b){
         b_temp = b_temp->next;
     }while( b_temp != NULL);
 
-    return copyP;
+    return copy_p;
 }
 
 /**
@@ -653,7 +647,7 @@ bool all_children_not_NULL(FitchTree * t){
     @param t Albero di Fitch (FitchTree)
     @param num_caratteri Lunghezza degli array di List nell'albero
 */
-FitchTree* joinf(FitchTree* t, int num_caratteri){
+FitchTree* join_f(FitchTree* t, int num_caratteri){
     FitchTree *f = t->figli;
     //t->lista == NULL; in questo punto.
     while( f != NULL ){
@@ -669,7 +663,7 @@ FitchTree* joinf(FitchTree* t, int num_caratteri){
     @param t Albero di Fitch (FitchTreee)
     @param num_caratteri Lunghezza degli array di List nell'albero
 */
-FitchTree* joinf_all(FitchTree* t, int num_caratteri){
+FitchTree* join_f_all(FitchTree* t, int num_caratteri){
 
     if( t == NULL ){
         return t; 
@@ -677,7 +671,7 @@ FitchTree* joinf_all(FitchTree* t, int num_caratteri){
 
     if( t->lista != NULL ){
         if( t->next != NULL ){
-            t->next = joinf_all(t->next, num_caratteri);
+            t->next = join_f_all(t->next, num_caratteri);
         }
         else{
             return t;
@@ -685,16 +679,16 @@ FitchTree* joinf_all(FitchTree* t, int num_caratteri){
     }
 
     if( t->lista == NULL && all_children_not_NULL(t) ){
-        t = joinf(t, num_caratteri);
+        t = join_f(t, num_caratteri);
     }
     else if(t->lista == NULL && all_children_not_NULL(t) == false) { 
         //Quindi t->lista == NULL && all_children_not_NULL(t) == false;
-        t->figli = joinf_all(t->figli,num_caratteri);
-        t = joinf_all(t, num_caratteri);
+        t->figli = join_f_all(t->figli,num_caratteri);
+        t = join_f_all(t, num_caratteri);
     }
     
     if( t->next != NULL ){
-        t->next = joinf_all(t->next, num_caratteri);
+        t->next = join_f_all(t->next, num_caratteri);
     }
     return t;
 }
@@ -706,13 +700,13 @@ FitchTree* joinf_all(FitchTree* t, int num_caratteri){
     @param max_stati array che dice lo stato massimo per ogni List
 
 */
-void merge_root(FitchTree* t, int num_caratteri, int maxStati[]){
+void merge_root(FitchTree* t, int num_caratteri, int max_stati[]){
     if( t == NULL ){
         return;
     }
     int i;
     for(i = 0; i < num_caratteri; i++){
-        t->lista[i] = moda(t->lista[i], maxStati[i]);
+        t->lista[i] = moda(t->lista[i], max_stati[i]);
     }
 
 }
@@ -722,9 +716,9 @@ void merge_root(FitchTree* t, int num_caratteri, int maxStati[]){
     di liste con lunghezza uno (le liste).
     @param t Albero di Fitch (FitchTree)
     @param num_caratteri Lunghezza degli array di List nell'albero
-    @param maxStati array che dice lo stato massimo per ogni List
+    @param max_stati array che dice lo stato massimo per ogni List
 */
-void merge_all(FitchTree* t, int num_caratteri, int maxStati[]){
+void merge_all(FitchTree* t, int num_caratteri, int max_stati[]){
     if( t == NULL ){
         return;
     }
@@ -733,16 +727,16 @@ void merge_all(FitchTree* t, int num_caratteri, int maxStati[]){
         int i;
         for(i = 0; i < num_caratteri; i++){
             t->lista[i] = 
-                moda_father(t->lista[i], maxStati[i]+1, t->padre, i);
+                moda_father(t->lista[i], max_stati[i]+1, t->padre, i);
         }      
     }
 
     if( t->figli != NULL ){
-        merge_all(t->figli, num_caratteri, maxStati);
+        merge_all(t->figli, num_caratteri, max_stati);
     }
 
     if( t->next != NULL ){
-        merge_all(t->next, num_caratteri, maxStati);
+        merge_all(t->next, num_caratteri, max_stati);
     }
 
 }
@@ -750,35 +744,35 @@ void merge_all(FitchTree* t, int num_caratteri, int maxStati[]){
 /**
     Riceve un FitchTree con lista di profondità massima 1,
     cioe' risolta, e ritorna un albero di Newick equivalente
-    @param newTree Albero di Newick (Tree)
+    @param new_tree Albero di Newick (Tree)
     @param tree Albero di Fitch risolto (FitchTree)
     @param num_caratteri Lunghezza degli array di List nell'albero
 */
-Tree * FitchTree_to_Newick(Tree *newTree, FitchTree *tree, int num_caratteri){
+Tree * FitchTree_to_Newick(Tree *new_tree, FitchTree *tree, int num_caratteri){
 
     if( tree == NULL ){
         return NULL;
     }
-    newTree->padre = NULL;
-    newTree->nF = tree->nF;
-    newTree->flag = true;
-    newTree->string = array_list_to_string(tree->lista, num_caratteri);
+    new_tree->padre = NULL;
+    new_tree->nF = tree->n_figli;
+    new_tree->flag = true;
+    new_tree->string = array_list_to_string(tree->lista, num_caratteri);
     if( tree->figli != NULL ){
-        newTree->figli = FitchTree_to_Newick(newTree->figli, tree->figli, num_caratteri);
-        newTree->figli->padre = newTree; 
+        new_tree->figli = FitchTree_to_Newick(new_tree->figli, tree->figli, num_caratteri);
+        new_tree->figli->padre = new_tree; 
     }
     else{
-        newTree->figli = NULL;
+        new_tree->figli = NULL;
     }
     if( tree->next != NULL ){
-        newTree->next = FitchTree_to_Newick(newTree->next, tree->next, num_caratteri); 
+        new_tree->next = FitchTree_to_Newick(new_tree->next, tree->next, num_caratteri); 
         
     }
     else{
-        newTree->next = NULL;
+        new_tree->next = NULL;
     }
 
-    return newTree;
+    return new_tree;
 }
 
 
@@ -787,16 +781,16 @@ Tree * FitchTree_to_Newick(Tree *newTree, FitchTree *tree, int num_caratteri){
     Fitch
     @param t Albero di Newick (Tree)
     @param num_caratteri Lunghezza delle stringhe nell'albero
-    @param maxStati Array che dice lo stato massimo per ogni carattere
+    @param max_stati Array che dice lo stato massimo per ogni carattere
 */
-void Fitch(Tree* t, int num_caratteri, int maxStati[]){
+void Fitch(Tree* t, int num_caratteri, int max_stati[]){
     
     if( t == NULL ){
         return; 
     }   
     FitchTree* fitch = make_FitchTree(t);
-    fitch = joinf_all(fitch, num_caratteri);
-    merge_all(fitch, num_caratteri, maxStati);
+    fitch = join_f_all(fitch, num_caratteri);
+    merge_all(fitch, num_caratteri, max_stati);
     FitchTree_to_Newick(t, fitch, num_caratteri);
     
 }
@@ -848,7 +842,7 @@ void fitch_algorithm(char* path){
     int numero_caratteri = numeroCaratteri(stringa);
     int *max_stati = statoMaxPerCarattere(stringa);
     Fitch(newick, numero_caratteri, max_stati);
-    char* stringaNewick = treeToNewick(newick);
-    printf("Output Fitch Tree: %s \n",  stringaNewick);    
-    string_to_file(path,stringaNewick);
+    char* stringa_newick = treeToNewick(newick);
+    printf("Output Fitch Tree: %s \n",  stringa_newick);    
+    string_to_file(path,stringa_newick);
 }
