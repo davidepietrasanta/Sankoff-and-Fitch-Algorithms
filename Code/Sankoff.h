@@ -3,7 +3,7 @@
 	@brief Algoritmo di Sankoff
 */
 typedef struct SankoffTree {
-    int nF; // Numero figli
+    int n_figli; // Numero figli
     int **score;
     struct SankoffTree *padre;
     struct SankoffTree *figli; // Punta al primo figlio

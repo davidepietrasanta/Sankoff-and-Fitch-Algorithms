@@ -23,14 +23,14 @@
 */
 typedef struct SankoffTree
 {
-    int nF; /**< Numero figli */
+    int n_figli; /**< Numero figli */
     int **score;
     struct SankoffTree *padre;
     struct SankoffTree *figli; /**< Punta al primo figlio */
     struct SankoffTree *next;  /**< Punta al prossimo fratello */
 } SankoffTree;
 
-const int inf = __INT_MAX__ / 16;
+const int in_figli = __INT_MAX__ / 16;
 
 /**
  * Restituisce True se il char in ingresso è un numero, False altrimenti
@@ -70,11 +70,11 @@ bool same_digit(char c, int num)
 SankoffTree *mk_sankoff_tree(Tree *tree, int n_states, int n_characters)
 {
     SankoffTree *s_tree = (SankoffTree *)malloc(sizeof(SankoffTree));
-    s_tree->nF = tree->nF;
+    s_tree->n_figli = tree->n_figli;
 
-    /* Se il nodo originale non ha informazioni allora neanche il nodo del
+    /* Se il nodo originale non ha in_figliormazioni allora neanche il nodo del
        nuovo albero ne avrà, altrimenti per ogni carattere si imposterà a 0 il
-       costo per lo stato che assume il carattere in quel nodo e +infinito
+       costo per lo stato che assume il carattere in quel nodo e +in_figliinito
        per tutti gli altri stati */
     if (!is_digit(tree->string[0]))
         s_tree->score = NULL;
@@ -88,14 +88,14 @@ SankoffTree *mk_sankoff_tree(Tree *tree, int n_states, int n_characters)
 
             for (int n_state = 0; n_state < n_states; n_state++)
                 score[n_char][n_state] = 
-                    same_digit(character, n_state) ? 0 : inf;
+                    same_digit(character, n_state) ? 0 : in_figli;
         }
         s_tree->score = score;
     }
     s_tree->padre = NULL;
 
     // Se il nodo ha almeno un figlio si costruiscono anche i nodi dei figli
-    if (s_tree->nF > 0)
+    if (s_tree->n_figli > 0)
     {
         // stSon sarà il primo figlio
         Tree *tree_son = tree->figli;
@@ -107,7 +107,7 @@ SankoffTree *mk_sankoff_tree(Tree *tree, int n_states, int n_characters)
         /* Fino a quando non si creano tutti i figli si crea un nuovo nodo e
            viene inizializzato sulla base di quello equivalente 
            nell'albero originale */
-        for (int n_son = 1; n_son < tree->nF; n_son++)
+        for (int n_son = 1; n_son < tree->n_figli; n_son++)
         {
             Tree *next = tree_son->next;
             SankoffTree *tmp_son =
@@ -136,14 +136,14 @@ int **join(SankoffTree *nodes, int n_states, int n_characters, int **cost)
     for (int n_char = 0; n_char < n_characters; n_char++)
     {
         joined[n_char] = (int *)malloc(n_states * sizeof(int));
-        int num_brothers = nodes->padre->nF;
+        int num_brothers = nodes->padre->n_figli;
         for (int i = 0; i < n_states; i++)
         {
             joined[n_char][i] = 0;
             int mins[num_brothers];
 
             for (int n_bro = 0; n_bro < num_brothers; n_bro++)
-                mins[n_bro] = inf;
+                mins[n_bro] = in_figli;
 
             for (int j = 0; j < n_states; j++)
             {
@@ -179,7 +179,7 @@ void *Sankoff(SankoffTree *node, int n_states, int n_characters, int **cost)
     {
         SankoffTree *node_son = node->figli;
         Sankoff(node_son, n_states, n_characters, cost);
-        for (int n_son = 1; n_son < node->nF; n_son++)
+        for (int n_son = 1; n_son < node->n_figli; n_son++)
         {
             SankoffTree *tmp_son = node_son->next;
             Sankoff(tmp_son, n_states, n_characters, cost);
@@ -334,14 +334,14 @@ void st_to_tree(Tree *tree, SankoffTree *s_tree, int n_s, int n_c, int **c)
             tree->string = stringa;
         }
 
-        if (s_tree->nF > 0)
+        if (s_tree->n_figli > 0)
         {
             Tree *son = tree->figli;
             SankoffTree *s_son = s_tree->figli;
 
             st_to_tree(son, s_son, n_s, n_c, c);
 
-            for (int n_son = 1; n_son < s_tree->nF; n_son++)
+            for (int n_son = 1; n_son < s_tree->n_figli; n_son++)
             {
                 s_son = s_son->next;
                 son = son->next;

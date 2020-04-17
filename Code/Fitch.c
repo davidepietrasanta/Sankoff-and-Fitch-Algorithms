@@ -366,7 +366,7 @@ FitchTree *make_FitchTree(Tree *tree){
     }
     FitchTree *new_tree = (FitchTree *)malloc(sizeof(FitchTree));
     new_tree->padre = NULL;
-    new_tree->n_figli = tree->nF;
+    new_tree->n_figli = tree->n_figli;
     if( !tree->flag ){
         new_tree->lista = NULL;
     }
@@ -754,7 +754,7 @@ Tree * FitchTree_to_Newick(Tree *new_tree, FitchTree *tree, int num_caratteri){
         return NULL;
     }
     new_tree->padre = NULL;
-    new_tree->nF = tree->n_figli;
+    new_tree->n_figli = tree->n_figli;
     new_tree->flag = true;
     new_tree->string = array_list_to_string(tree->lista, num_caratteri);
     if( tree->figli != NULL ){
