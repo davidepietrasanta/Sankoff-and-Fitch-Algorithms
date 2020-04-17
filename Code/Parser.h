@@ -7,7 +7,7 @@
 */
 
 typedef struct Tree {
-    int nF; //numero figli
+    int n_figli; //numero figli
 	char* string;
     bool flag; //True if ok
     struct Tree* padre;
@@ -19,36 +19,36 @@ extern int len(char*);
 
 extern char* fstring(char*);
     
-extern bool numericalString(char*);
+extern bool numerical_string(char*);
     
-extern Tree* doTree(char*);
+extern Tree* do_tree(char*);
     
-extern void addNext(Tree*, Tree*);
+extern void add_next(Tree*, Tree*);
    
 extern char* reverse(char*);
    
-extern int contSimbol(char*);
+extern int cont_simbol(char*);
     
-extern int* allSimbol(char*);
+extern int* all_simbo(char*);
    
-extern void setInit(char*, int);
+extern void set_init(char*, int);
    
 extern char** extract(char*);
    
 extern Tree* Newick(char*);
    
-extern void printIntArray(int*, int);
+extern void print_int_array(int*, int);
     
-extern void stampaMatrix(char**, int);
+extern void stampa_matrix(char**, int);
    
-extern void printTree(Tree*);
+extern void print_tree(Tree*);
 
-extern int numeroNodi(Tree*);
+extern int numero_nodi(Tree*);
 
-extern int numeroCaratteri(char*);
+extern int numero_caratteri(char*);
 
-extern int* statoMaxPerCarattere(char*);
+extern int* stato_max_per_carattere(char*);
 
-extern char* treeToNewick(Tree*);
+extern char* tree_to_Newick(Tree*);
 
 #endif

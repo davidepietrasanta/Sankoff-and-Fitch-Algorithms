@@ -363,13 +363,13 @@ void sankoff_algorithm(char *string_path, char *mat_path)
     char *matrix = fstring(mat_path);
     int n_states = 0;
     int **cost = get_matrix(matrix, &n_states);
-    int n_characters = numeroCaratteri(string);
+    int n_characters = numero_caratteri(string);
     printf("Input Tree: %s\n", string);
     Tree *tree = Newick(string);
     SankoffTree *stree = mk_sankoff_tree(tree, n_states, n_characters);
     Sankoff(stree, n_states, n_characters, cost);
     st_to_tree(tree, stree, n_states, n_characters, cost);
-    char *stringa_newick = treeToNewick(tree);
+    char *stringa_newick = tree_to_Newick(tree);
     printf("Cost matrix: \n\nNumber of states: ");
     printf("%s", matrix);
     printf("\nOutput Sankoff Tree: %s\n", stringa_newick);

@@ -1,6 +1,6 @@
  #include <stdlib.h>
 #include <stdbool.h> //Per un tipo di dato booleano. (Aggiunto con il C99) 
-#include <stdio.h> //Fornisce le funzionalità basilari di input/output del C. Questo file include il prototipo delle venerabili funzioni printf e scanf. 
+#include <stdio.h> //Fornisce le funzionalità basilari di input/output del C. Questo file include il prototipo delle venerabili funzioni printf e scan_figli. 
 #include <string.h> //Per manipolare le stringhe. 
 
 /**
@@ -13,7 +13,7 @@
     di stringhe con N figli
 */
 typedef struct Tree {
-    int nF; //numero figli
+    int n_figli; //numero figli
 	char* string;
     bool flag; //True if ok
     struct Tree* padre;
@@ -63,7 +63,7 @@ char* fstring(char *path){
     False altrimenti
     @param s stringa
 */
-bool numericalString(char *s){
+bool numerical_string(char *s){
     int i;
     if( len(s) == 0 ){
         return false;
@@ -82,12 +82,12 @@ bool numericalString(char *s){
     della stringa c
     @param c stringa 
 */
-Tree* doTree(char* c){
+Tree* do_tree(char* c){
 
     Tree *l = (Tree*)malloc(sizeof(Tree));
-    l->nF = 0;
+    l->n_figli = 0;
     l->string = c;
-    l->flag = numericalString(c);
+    l->flag = numerical_string(c);
     l->padre = NULL;
     l->figli = NULL;
     l->next = NULL;
@@ -102,7 +102,7 @@ Tree* doTree(char* c){
     @param t Albero in cui si vuole inserire 
     @param brother Albero che si vuole inserire come fratello
 */
-void addNext(Tree* t, Tree* brother){
+void add_next(Tree* t, Tree* brother){
 
     if( brother == NULL ){
         return;
@@ -113,7 +113,7 @@ void addNext(Tree* t, Tree* brother){
     }
     brother->padre = t->padre;
     if( t->padre != NULL ){
-        brother->padre->nF = brother->padre->nF + 1;
+        brother->padre->n_figli = brother->padre->n_figli + 1;
     }
     while(t->next != NULL){
         t = t->next;
@@ -127,12 +127,12 @@ void addNext(Tree* t, Tree* brother){
 */
 char* reverse(char *s){
 
-    int lenS = len(s);
+    int lens = len(s);
     int i;
-    char *temp = (char*)malloc((lenS+1)*sizeof(char));
-    for(i = 0; i < lenS; i++){
-        if( s[lenS-1-i] == ')' || s[lenS-1-i] == '(' ){
-            if( s[lenS-1-i] == ')' ){
+    char *temp = (char*)malloc((lens+1)*sizeof(char));
+    for(i = 0; i < lens; i++){
+        if( s[lens-1-i] == ')' || s[lens-1-i] == '(' ){
+            if( s[lens-1-i] == ')' ){
                 temp[i] = '(';
             }
             else{
@@ -140,10 +140,10 @@ char* reverse(char *s){
             }
         }
         else{
-            temp[i] = s[lenS-1-i];
+            temp[i] = s[lens-1-i];
         }
     }
-    temp[lenS] = '\0';
+    temp[lens] = '\0';
     return temp;
 }
 
@@ -153,12 +153,12 @@ char* reverse(char *s){
     '(' , ')' oppure ','
     @param s stringa
 */
-int contSimbol(char *s){
+int cont_simbol(char *s){
 
     int i;
     int cont=0;
-    int lenS = len(s);
-     for(i = 0; i < lenS; i++){
+    int lens = len(s);
+     for(i = 0; i < lens; i++){
         if( s[i] == ')' || s[i] == '(' || s[i] == ',' ){
             cont++;
         }
@@ -170,19 +170,19 @@ int contSimbol(char *s){
 	Ritorna un array di int contenente
     la lista degli indici in cui sono 
     presente dei simboli (rilevati da 
-    contSimbol) 
+    cont_simbol) 
     @param s stringa
 */
-int* allSimbol(char *s){
+int* all_simbol(char *s){
 
-    int cont = contSimbol(s);
-    int contTemp = 0;
+    int cont = cont_simbol(s);
+    int cont_temp = 0;
     int i;
     int *array = (int*)malloc((cont)*sizeof(int));
     for(i = 0; s[i] != '\0' ; i++){
         if( s[i] == ')' || s[i] == '(' || s[i] == ',' ){
-            array[contTemp] = i;
-            contTemp++;
+            array[cont_temp] = i;
+            cont_temp++;
         }
     }
     return array;
@@ -194,7 +194,7 @@ int* allSimbol(char *s){
     @param s stringa
     @param i lunghezza dela stringa
 */
-void setInit(char *s, int i){
+void set_init(char *s, int i){
 
     int j;
     for(j = 0; j < i; j++){
@@ -208,7 +208,7 @@ void setInit(char *s, int i){
     @param array Array di int da stampare
     @param len Lunghezza dell'array
 */
-void printIntArray(int *array, int len){
+void print_int_array(int *array, int len){
 
     int i;
     for(i = 0; i < len-1; i++){
@@ -225,12 +225,12 @@ void printIntArray(int *array, int len){
 char** extract(char *rev){
 
     int i;
-    int cont = contSimbol(rev);
-    int *array = allSimbol(rev); //lunghezza cont
+    int cont = cont_simbol(rev);
+    int *array = all_simbol(rev); //lunghezza cont
     char **estratti = (char**)malloc( cont * sizeof(char*));
     for(i =0; i < cont; i++){
         estratti[i] = (char*)malloc( len(rev) * sizeof(char)); //just to be sure...
-        setInit(estratti[i], len(rev));
+        set_init(estratti[i], len(rev));
     }
     
     strncpy(estratti[0], rev, array[0]);
@@ -248,7 +248,7 @@ char** extract(char *rev){
     @param s Matrice quadrata di char
     @param x Dimensione della matrice
 */
-void stampaMatrix(char **s, int x){
+void stampa_matrix(char **s, int x){
 
     int i;
     for(i = 0; i < x-1; i++){
@@ -266,33 +266,33 @@ Tree* Newick(char* string){
 
     Tree* root = (Tree*)malloc(sizeof(Tree));
     char *rev = reverse(string);
-    int cont = contSimbol(rev);
+    int cont = cont_simbol(rev);
     char **estratto = extract(rev);
 
-    int *indexSimbols = allSimbol(rev); //lunghezza cont
+    int *index_simbols = all_simbol(rev); //lunghezza cont
     int i; 
-    root = doTree(estratto[0]);
+    root = do_tree(estratto[0]);
 
     for(i = 0; i < cont-1; i++){
-        if( rev[indexSimbols[i]] == '(' ){
+        if( rev[index_simbols[i]] == '(' ){
             if( root->figli == NULL ){
-                root->figli = doTree(estratto[i+1]);
-                root->nF = root->nF + 1;
+                root->figli = do_tree(estratto[i+1]);
+                root->n_figli = root->n_figli + 1;
                 root->figli->padre = root;
                 root = root->figli;
             }
             else{
                 root = root->figli;
-                addNext(root,doTree(estratto[i+1]));
+                add_next(root,do_tree(estratto[i+1]));
             }
         }
-        if( rev[indexSimbols[i]] == ',' ){
-            addNext(root, doTree(estratto[i+1]));
+        if( rev[index_simbols[i]] == ',' ){
+            add_next(root, do_tree(estratto[i+1]));
             if( root->next != NULL){
                 root = root->next;
             }
         }
-        if( rev[indexSimbols[i]] == ')' ){
+        if( rev[index_simbols[i]] == ')' ){
             root = root->padre;
         }
     }
@@ -303,7 +303,7 @@ Tree* Newick(char* string){
 	Stampa un Tree 
     @param t Albero Tree
 */
-void printTree(Tree* t){
+void print_tree(Tree* t){
 
     if( t == NULL ){
         printf("Empty \n");
@@ -311,10 +311,10 @@ void printTree(Tree* t){
 
     printf("%s \n", t->string);
     if( t->figli != NULL){
-        printTree(t->figli);
+        print_tree(t->figli);
     }
     if( t->next != NULL){
-        printTree(t->next);
+        print_tree(t->next);
     }
     
 }
@@ -323,17 +323,17 @@ void printTree(Tree* t){
 	Conta il numero di nodi dell'albero 
     @param t Albero Tree
 */
-int numeroNodi(Tree *t){
+int numero_nodi(Tree *t){
     if( t == NULL ){
         return 0;
     }
 
     int cont = 1;
     if( t->figli != NULL){
-        cont = cont + numeroNodi(t->figli);
+        cont = cont + numero_nodi(t->figli);
     }
     if( t->next != NULL){
-        cont = cont + numeroNodi(t->next);
+        cont = cont + numero_nodi(t->next);
     }
     return cont;
 }
@@ -342,17 +342,17 @@ int numeroNodi(Tree *t){
 	Conta il numero di Caratteri delle specie
     @param string stringa
 */
-int numeroCaratteri(char *string){
+int numero_caratteri(char *string){
     
     char ** estratti = extract(string);
-    int nSimboli = contSimbol(string);
+    int n_simboli = cont_simbol(string);
     int max = 0;
     if(string == NULL ){
         return 0;
     }
     int i;
-    for(i = 0; i < nSimboli; i++){
-        if( numericalString(estratti[i]) && max < len(estratti[i]) ){
+    for(i = 0; i < n_simboli; i++){
+        if( numerical_string(estratti[i]) && max < len(estratti[i]) ){
             max = len(estratti[i]);
         }
     }
@@ -364,24 +364,24 @@ int numeroCaratteri(char *string){
     carattere delle specie 
     @param string stringa
 */
-int* statoMaxPerCarattere(char *string){
+int* stato_max_per_carattere(char *string){
     if(string == NULL ){
         return 0;
     }
 
     char ** estratti = extract(string);
-    int nSimboli = contSimbol(string);
-    int nCaratteri = numeroCaratteri(string);
-    int *max = (int*)malloc(nCaratteri*sizeof(int)); 
+    int n_simboli = cont_simbol(string);
+    int n_caratteri = numero_caratteri(string);
+    int *max = (int*)malloc(n_caratteri*sizeof(int)); 
     int i;
     int j;
-    for(i = 0; i < nCaratteri; i++){
+    for(i = 0; i < n_caratteri; i++){
         max[i] = 0;
     }
 
-    for(i = 0; i < nSimboli; i++){
-        if( numericalString(estratti[i]) ){
-            for(j = 0; j < nCaratteri; j++){
+    for(i = 0; i < n_simboli; i++){
+        if( numerical_string(estratti[i]) ){
+            for(j = 0; j < n_caratteri; j++){
                 if( max[j] < estratti[i][j] - '0' ){
                     max[j] = estratti[i][j] - '0';
                 }
@@ -390,11 +390,11 @@ int* statoMaxPerCarattere(char *string){
     }
     
 
-    //stampaMatrix(estratti, nSimboli);
+    //stampa_matrix(estratti, n_simboli);
     //printf("estratti[0] %s.\n", estratti[0]);
 
     //printf("max ");
-    //printIntArray(max, nCaratteri);
+    //print_int_array(max, n_caratteri);
     //printf("fine\n");
     return max;
 }
@@ -404,7 +404,7 @@ int* statoMaxPerCarattere(char *string){
     dell'albero in input
     @param t Albero Tree
 */
-char* treeToNewick(Tree *t){
+char* tree_to_Newick(Tree *t){
 
     if( t == NULL ){
         return NULL;
@@ -413,13 +413,13 @@ char* treeToNewick(Tree *t){
     char *res = t->string;
     if( t->figli != NULL){
         res = strcat(res, "(");
-        res = strcat(res, reverse(treeToNewick(t->figli)));
+        res = strcat(res, reverse(tree_to_Newick(t->figli)));
         res = strcat(res, ")");
         
     }
     if( t->next != NULL){
         res = strcat(res, ",");
-        res = strcat(res, reverse(treeToNewick(t->next)));
+        res = strcat(res, reverse(tree_to_Newick(t->next)));
     }
     res = reverse(res);
     return res;

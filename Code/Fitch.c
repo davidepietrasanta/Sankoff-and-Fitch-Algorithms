@@ -839,10 +839,10 @@ void fitch_algorithm(char* path){
     char *stringa = fstring(path);
     printf("Input Tree: %s\n",stringa);
     Tree *newick = Newick(stringa);
-    int numero_caratteri = numeroCaratteri(stringa);
-    int *max_stati = statoMaxPerCarattere(stringa);
-    Fitch(newick, numero_caratteri, max_stati);
-    char* stringa_newick = treeToNewick(newick);
+    int num_caratteri = numero_caratteri(stringa);
+    int *max_stati = stato_max_per_carattere(stringa);
+    Fitch(newick, num_caratteri, max_stati);
+    char* stringa_newick = tree_to_Newick(newick);
     printf("Output Fitch Tree: %s \n",  stringa_newick);    
     string_to_file(path,stringa_newick);
 }
