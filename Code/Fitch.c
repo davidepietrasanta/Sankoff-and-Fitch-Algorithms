@@ -1,3 +1,4 @@
+
 #include <stdbool.h> //Per un tipo di dato booleano. (Aggiunto con il C99) 
 #include <stdio.h> //Fornisce le funzionalità basilari di input/output del C.
 #include <string.h> //Per manipolare le stringhe. 
@@ -381,24 +382,24 @@ FitchTree *make_FitchTree(Tree *tree){
     }
 
     if( tree->figli != NULL ){
-        newTree->figli = make_FitchTree(tree->figli);
+        Tree* iterator = tree->figli;
+        newTree->figli = make_FitchTree(iterator);
         FitchTree* temp = newTree->figli;
-        while( temp != NULL ){
-            temp->padre = newTree;
+        temp->padre = newTree;
+        newTree->figli = temp;
+        while( iterator->next != NULL ){
+            temp->next = make_FitchTree(iterator->next);
             temp = temp->next; 
+            temp->padre=newTree;
+            iterator = iterator->next;
+            
         } 
     }
     else{
         newTree->figli = NULL;
     }
 
-    if( tree->next != NULL ){
-        newTree->next = make_FitchTree(tree->next); 
-    }
-    else{
-        newTree->next = NULL;
-    }
-
+    newTree->next=NULL;
 
 }
 
@@ -758,13 +759,10 @@ Tree * FitchTree_to_Newick(Tree *newTree, FitchTree *tree, int num_caratteri){
     if( tree == NULL ){
         return NULL;
     }
-
     newTree->padre = NULL;
     newTree->nF = tree->nF;
     newTree->flag = true;
-
     newTree->string = array_list_to_string(tree->lista, num_caratteri);
-
     if( tree->figli != NULL ){
         newTree->figli = FitchTree_to_Newick(newTree->figli, tree->figli, num_caratteri);
         newTree->figli->padre = newTree; 
@@ -772,13 +770,15 @@ Tree * FitchTree_to_Newick(Tree *newTree, FitchTree *tree, int num_caratteri){
     else{
         newTree->figli = NULL;
     }
-
     if( tree->next != NULL ){
         newTree->next = FitchTree_to_Newick(newTree->next, tree->next, num_caratteri); 
+        
     }
     else{
         newTree->next = NULL;
     }
+
+    return newTree;
 }
 
 
@@ -844,7 +844,7 @@ void fitch_algorithm(char* path){
 
     char *stringa = fstring(path);
     printf("Input Tree: %s\n",stringa);
-    Tree* newick = Newick(stringa);
+    Tree *newick = Newick(stringa);
     int numero_caratteri = numeroCaratteri(stringa);
     int *max_stati = statoMaxPerCarattere(stringa);
     Fitch(newick, numero_caratteri, max_stati);
